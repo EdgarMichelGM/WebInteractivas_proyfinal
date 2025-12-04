@@ -1,10 +1,16 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 const props = defineProps({
     users: Array,
 });
+
+const destroyUser = (id) => {
+    if (confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')) {
+        router.delete(route('users.destroy', id));
+    }
+};
 </script>
 
 <template>
@@ -79,7 +85,11 @@ const props = defineProps({
                                 >
                                     Editar
                                 </Link>
-                                <button class="text-xs text-red-500" disabled>
+                                <button
+                                    class="text-xs text-red-500"
+                                    type="button"
+                                    @click="destroyUser(user.id)"
+                                >
                                     Eliminar
                                 </button>
                             </td>

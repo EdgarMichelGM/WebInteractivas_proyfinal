@@ -5,6 +5,12 @@ import { Head, Link } from '@inertiajs/vue3';
 const props = defineProps({
     materias: Array,
 });
+
+const destroyMateria = (id) => {
+    if (confirm('¿Seguro que deseas eliminar esta materia?')) {
+        router.delete(route('materias.destroy', id));
+    }
+};
 </script>
 
 <template>
@@ -57,7 +63,6 @@ const props = defineProps({
                             <th class="py-2">Clave</th>
                             <th class="py-2">Materia</th>
                             <th class="py-2">Asesor</th>
-                            <th class="py-2">Alumnos</th>
                             <th class="py-2 text-right">Acciones</th>
                         </tr>
                     </thead>
@@ -76,11 +81,6 @@ const props = defineProps({
                             <td class="py-2 align-middle text-brand-700/90">
                                 {{ m.asesor }}
                             </td>
-                            <td class="py-2 align-middle">
-                                <span class="badge-soft">
-                                    {{ m.alumnos }} alumnos
-                                </span>
-                            </td>
                             <td class="py-2 align-middle text-right space-x-2">
                                 <Link
                                     :href="route('materias.edit', m.id)"
@@ -88,7 +88,11 @@ const props = defineProps({
                                 >
                                     Editar
                                 </Link>
-                                <button class="text-xs text-red-500" disabled>
+                                <button
+                                    class="text-xs text-red-500"
+                                    type="button"
+                                    @click="destroyMateria(m.id)"
+                                >
                                     Eliminar
                                 </button>
                             </td>

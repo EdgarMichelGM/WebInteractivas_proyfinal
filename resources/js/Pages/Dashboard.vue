@@ -3,25 +3,31 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
-// Notas temporales
+
 const notes = [
     {
         id: 1,
         title: 'Bienvenido a Mr Aprende',
-        body: 'Recuerda que desde este panel puedes gestionar usuarios, materias y tus tutorías.',
+        body: 'Desde este panel puedes gestionar usuarios, materias y tus tutorías.',
         tag: 'General',
     },
     {
         id: 2,
         title: 'Asigna asesores a materias',
-        body: 'No olvides revisar que cada materia tenga un asesor asignado para que los alumnos vean a quién acudir.',
+        body: 'Verifica que cada materia tenga un asesor asignado para que los alumnos sepan a quién acudir.',
         tag: 'Materias',
     },
     {
         id: 3,
-        title: 'Próximamente: calificaciones',
-        body: 'En la sección de Calificaciones podrás ver vistas diferentes para asesor y alumno.',
-        tag: 'Calificaciones',
+        title: 'Organiza tus tutorías',
+        body: 'En la sección "Mis tutorías" podrás revisar las sesiones activas y su organización.',
+        tag: 'Tutorías',
+    },
+    {
+        id: 4,
+        title: 'Seguimiento académico',
+        body: 'Utiliza Calificaciones y Agenda para llevar el control de avances y próximos eventos.',
+        tag: 'Seguimiento',
     },
 ];
 
@@ -56,11 +62,11 @@ const goToNote = (index) => {
                     Panel principal
                 </h1>
                 <p class="text-sm text-brand-700/80 max-w-xl">
-                    Administra usuarios, materias, cursos y tutorías desde un solo lugar.
+                    Administra usuarios, materias, tutorías, calificaciones y agenda desde un solo lugar.
                 </p>
             </header>
 
-            <!-- Carrusel de notas -->
+
             <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-stretch">
                 <div class="card-soft p-5 flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3">
@@ -83,7 +89,6 @@ const goToNote = (index) => {
                     </p>
 
                     <div class="flex items-center justify-between mt-auto pt-2">
-                        <!-- Controles izquierda -->
                         <div class="flex items-center gap-2">
                             <button
                                 type="button"
@@ -101,56 +106,127 @@ const goToNote = (index) => {
                             </button>
                         </div>
 
-                        <!-- Dots -->
                         <div class="flex items-center gap-1.5">
                             <button
                                 v-for="(note, index) in notes"
                                 :key="note.id"
                                 type="button"
-                                class="h-2.5 w-2.5 rounded-full transition-all"
+                                class="h-2.5 rounded-full transition-all"
                                 :class="index === currentIndex
                                     ? 'bg-brand-500 w-4'
-                                    : 'bg-brand-200 hover:bg-brand-300'"
+                                    : 'bg-brand-200 hover:bg-brand-300 w-2.5'"
                                 @click="goToNote(index)"
                             />
                         </div>
                     </div>
                 </div>
-
-                <!-- Tarjetas rápidas (atajos) -->
                 <div class="space-y-3">
+
                     <div class="card-soft p-4">
                         <h3 class="text-sm font-semibold text-brand-900 mb-1">
                             Gestión académica
                         </h3>
                         <p class="text-xs text-brand-700/80 mb-3">
-                            Accede rápidamente a la administración de usuarios y materias.
+                            Accede rápidamente a la administración de usuarios, materias y a las herramientas clave del día a día.
                         </p>
-                        <div class="flex gap-2">
-                            <Link :href="route('users.index')" class="btn-outline text-xs">
-                                Usuarios
+
+                        <div class="flex flex-wrap gap-2">
+                            <!-- Usuarios -->
+                            <div class="relative group">
+                                <template v-if="$page.props.auth.user.role === 'admin'">
+                                    <Link
+                                        :href="route('users.index')"
+                                        class="btn-outline text-xs"
+                                    >
+                                        Usuarios
+                                    </Link>
+                                </template>
+                                <template v-else>
+                                    <span
+                                        class="btn-outline text-xs cursor-not-allowed opacity-60 select-none"
+                                    >
+                                        Usuarios
+                                    </span>
+                                </template>
+
+                                <span
+                                    v-if="$page.props.auth.user.role !== 'admin'"
+                                    class="pointer-events-none absolute left-1/2 -translate-x-1/2 top-8
+                                           whitespace-nowrap rounded-lg bg-brand-900 px-2 py-1 text-[10px] text-brand-50
+                                           opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                >
+                                    Solo el administrador puede acceder a esta función
+                                </span>
+                            </div>
+
+                            <!-- Materias -->
+                            <div class="relative group">
+                                <template v-if="$page.props.auth.user.role === 'admin'">
+                                    <Link
+                                        :href="route('materias.index')"
+                                        class="btn-outline text-xs"
+                                    >
+                                        Materias
+                                    </Link>
+                                </template>
+                                <template v-else>
+                                    <span
+                                        class="btn-outline text-xs cursor-not-allowed opacity-60 select-none"
+                                    >
+                                        Materias
+                                    </span>
+                                </template>
+                                <span
+                                    v-if="$page.props.auth.user.role !== 'admin'"
+                                    class="pointer-events-none absolute left-1/2 -translate-x-1/2 top-8
+                                           whitespace-nowrap rounded-lg bg-brand-900 px-2 py-1 text-[10px] text-brand-50
+                                           opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                >
+                                    Solo el administrador puede acceder a esta función
+                                </span>
+                            </div>
+
+                            <Link
+                                :href="route('tutorias.index')"
+                                class="btn-outline text-xs"
+                            >
+                                Mis tutorías
                             </Link>
-                            <Link :href="route('materias.index')" class="btn-outline text-xs">
-                                Materias
+                            <Link
+                                :href="route('grades.index')"
+                                class="btn-outline text-xs"
+                            >
+                                Calificaciones
+                            </Link>
+                            <Link
+                                :href="route('agenda.index')"
+                                class="btn-outline text-xs"
+                            >
+                                Agenda
                             </Link>
                         </div>
                     </div>
 
-                    <div class="card-soft p-4">
+                    <div
+                        v-if="$page.props.auth.user.role !== 'alumno'"
+                        class="card-soft p-4"
+                    >
                         <h3 class="text-sm font-semibold text-brand-900 mb-1">
-                            Tutorías y cursos
+                            Vista docente
                         </h3>
                         <p class="text-xs text-brand-700/80 mb-3">
-                            Explora el catálogo de cursos y revisa tus tutorías activas.
+                            Espacio pensado para docentes y administradores. Aquí podrás tener a la mano un resumen de tu carga académica y tutorías.
                         </p>
-                        <div class="flex gap-2">
-                            <Link :href="route('courses.index')" class="btn-outline text-xs">
-                                Ver cursos
-                            </Link>
-                            <Link :href="route('tutorias.index')" class="btn-outline text-xs">
-                                Mis tutorías
-                            </Link>
-                        </div>
+                        <ul class="text-xs text-brand-700/90 space-y-1.5">
+                            <li class="flex items-center gap-2">
+                                <span class="h-1.5 w-1.5 rounded-full bg-brand-400"></span>
+                                Revisa rápidamente qué materias asesoras y qué grupos atiendes.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="h-1.5 w-1.5 rounded-full bg-brand-400"></span>
+                                Centraliza tus tutorías y sesiones futuras desde un mismo panel.
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </section>

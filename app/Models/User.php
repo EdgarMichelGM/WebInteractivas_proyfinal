@@ -46,8 +46,20 @@ class User extends Authenticatable
         ];
     }
 
+    public function materiasInscritas()
+    {
+        return $this->belongsToMany(Materia::class, 'materia_user')->withTimestamps();
+    }
+
+
     public function materiasAsesor()
     {
         return $this->hasMany(Materia::class, 'asesor_id');
     }
+
+    public function grades()
+    {
+        return $this->hasMany(Grade::class, 'alumno_id');
+    }
+
 }
